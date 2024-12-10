@@ -1,0 +1,120 @@
+﻿@inject IFileDialogRead FilePickerRead
+@inject IFilePickerSave FilePickerSave
+@inject IConverterArquivoPdf ConverterArquivoPdf
+@inject IDialogService DialogService
+
+@page "/"
+
+<MudGrid>
+    <MudItem xl="12" lg="12" md="12" sm="12" xs="12">
+        <MudButton HtmlTag="label"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled=IsLoad
+                   StartIcon=@Icons.Material.Rounded.PictureAsPdf
+                   FullWidth=true
+                   Style="font-size: 11px"
+                   OnClick="GetDirectoryPath">
+            Selecionar Arquivo
+        </MudButton>
+    </MudItem>
+    <MudItem xl="12" lg="12" md="12" sm="12" xs="12">
+        <MudPaper Class="px-4 py-2">
+            <MudText Typo="Typo.subtitle2">@NomeArquivo</MudText>
+            <MudText Typo="Typo.caption" Color="Color.Surface">@TamanhoArquivo</MudText>
+        </MudPaper>
+    </MudItem>
+
+    @if (IsLoad)
+    {
+        <MudItem xl="12" lg="12" md="12" sm="12" xs="12">
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+        </MudItem>
+    }
+
+    @if (ExibirSalvar)
+    {
+        <MudItem xl="12" lg="12" md="12" sm="12" xs="12">
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled=IsLoad
+                       StartIcon=@Icons.Material.Rounded.Save
+                       FullWidth=true
+                       Style="font-size: 11px"
+                       OnClick="ConvertPdfToOcr">
+                Converter e Salvar Arquivo
+            </MudButton>
+        </MudItem>
+    }
+
+</MudGrid>
+
+
+
+
+@code {
+    const string NomeArquivoConstant = "Clique no botão acima para selecionar o arquivo PDF...";
+    string NomeArquivo = NomeArquivoConstant;
+    string TamanhoArquivo = "";
+    string FilePath = "";
+    bool ExibirSalvar = false;
+    bool IsLoad = false;
+
+    async void GetDirectoryPath()
+    {
+        var file = await FilePickerRead.ReadPathAsync();
+
+        if (string.IsNullOrEmpty(file))
+        {
+            Limpar();
+            return;
+        }
+
+        var fileInfo = new System.IO.FileInfo(file);
+
+        NomeArquivo = fileInfo.Name;
+        TamanhoArquivo = ConvertFileLength.ConvertToBestFormat(fileInfo.Length);
+        FilePath = fileInfo.FullName;
+
+        ExibirSalvar = true;
+    }
+
+    async void ConvertPdfToOcr()
+    {
+        var fileSave = await FilePickerSave.SavePath(FilePath);
+
+        if (string.IsNullOrEmpty(fileSave))
+            return;
+
+        Load(true);
+
+        await ConverterArquivoPdf.FazerConversaoSalvarAsync(FilePath, fileSave);
+
+        await OpenDialogAsync();
+
+        Load(false);
+    }
+
+    private async Task OpenDialogAsync()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        await DialogService.ShowMessageBox("Salvo", "Arquivo salvo com sucesso");
+    }
+
+    void Load(bool isLoad)
+    {
+        IsLoad = isLoad;
+        StateHasChanged();
+    }
+
+    void Limpar()
+    {
+        NomeArquivo = NomeArquivoConstant;
+        TamanhoArquivo = "";
+        FilePath = "";
+        ExibirSalvar = false;
+        IsLoad = false;
+    }
+}

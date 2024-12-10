@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Dense=true>
+        <MudText Typo="Typo.h6" Class="ml-3">Converter PDF comum para PDF com OCR</MudText>
+        <MudSpacer />
+        <MudIconButton Icon=@Icons.Custom.Brands.GitHub Color=Color.Inherit Edge=Edge.End Href="https://github.com/LightRamzel/GestaoPDF" Target="_blank" />
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer Class="pa-5">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
