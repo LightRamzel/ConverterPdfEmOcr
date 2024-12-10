@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ConverterPdfEmOcr.Wpf.Utils;
 
-public class FilePickerSave : IFilePickerSave
+public class FileDialogSave : IFileDialogSave
 {
     private readonly SaveFileDialog _saveFileDialog = new()
     {

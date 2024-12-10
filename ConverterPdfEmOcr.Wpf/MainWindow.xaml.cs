@@ -19,7 +19,7 @@ public partial class MainWindow : Window
 
         serviceCollection.AddWpfBlazorWebView();
         serviceCollection.AddScoped<IFileDialogRead, FileDialogRead>();
-        serviceCollection.AddScoped<IFilePickerSave, FilePickerSave>();
+        serviceCollection.AddScoped<IFileDialogSave, FileDialogSave>();
         serviceCollection.AddScoped<IConverterArquivoPdf, ConverterArquivoPdf>();
 
 #if DEBUG

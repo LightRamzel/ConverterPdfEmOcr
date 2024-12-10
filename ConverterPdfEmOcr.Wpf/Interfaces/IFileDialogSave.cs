@@ -1,6 +1,6 @@
 ﻿namespace ConverterPdfEmOcr.Wpf.Interfaces;
 
-public interface IFilePickerSave
+public interface IFileDialogSave
 {
     Task<string> SavePath(string nomeArquivoOriginal);
 }
